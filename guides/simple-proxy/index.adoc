@@ -1,0 +1,93 @@
+:encoding: UTF-8
+:linkattrs:
+:sectlink:
+:sectanchors:
+:sectid:
+:imagesdir: media
+:leveloffset: 1
+
+= Routing Simple Proxy Quickstart Guide
+
+=== Learning Objectives
+
+* Write a simple rewrite rule to proxy a website
+
+=== Prerequisites
+
+* Docker
+
+== Routing
+
+Routing is an essential concept of the TAG. It allows you to authenticate, authorize and modify each incoming request,
+before resending it to any underlying service based on its URL.
+
+It implements the same rule-based rewriting engine as
+https://httpd.apache.org/docs/current/mod/mod_rewrite.html[mod_rewrite, window="_blank"], with just a few minor
+differences. https://httpd.apache.org/docs/current/mod/mod_rewrite.html[mod_rewrite, window="_blank"] provides a
+flexible and powerful way to manipulate URLs using an unlimited number of rules. Each rule can have an unlimited
+number of attached rule conditions, to allow you to rewrite URL based on server variables, environment variables,
+HTTP headers, or time stamps.
+
+=== RewriteRule Directive
+
+To write your first Route, we need a Rewrite Rule. Let's start with a simple one:
+
+```
+RewriteRule "^/tomitribe$" "https://www.tomitribe.com" [P]
+```
+
+A Rewrite Rule requires the directive `RewriteRule` followed by a pattern `^/tomitribe$` to match the incoming request
+URL, a substitution `\https://www.tomitribe.com` to rewrite the request if matched, and finally one or more flags in
+square brackets `[P]` to modify the behavior. The `^` and `$` characters delimit the beginning and the end of the
+pattern to be matched.
+
+=== Run the Sample
+
+Use Docker to start an instance of the TAG with the command:
+
+```
+docker run -e LICENSE=accept --name tag -p 8080:8080 tomitribe/tribestream-api-gateway
+```
+
+Access TAG in http://localhost:8080/tag and login with the credentials `admin/admin`. Navigate to the Routes page
+http://localhost:8080/tag/route and add the example `RewriteRule`:
+
+image::simple-proxy-01-add-route.png[]
+
+Assuming that TAG is running in http://localhost:8080, this rule will match all the incoming requests to TAG to the
+URL http://localhost:8080/tomitribe and Proxy to the substitute address https://www.tomitribe.com due to the `[P] flag.
+
+Now, in the browser of your choice, if you try to access the address http://localhost:8080/tomitribe, you should get
+the Tomitribe website proxied through TAG:
+
+image::simple-proxy-02-website-broken.png[]
+
+You may notice that the website is not displaying properly. This is due to the fact that we are only rewriting the
+main address after the slash. A web page is usually composed of several other files, like images or css’s. The
+addresses of these files also need to be rewritten. Let’s add the following rewrite rule to our route:
+
+```
+RewriteRule "^/(.*)$" "https://www.tomitribe.com/$1" [P]
+```
+
+The pattern portion of a `RewriteRule` is a Perl compatible regular expression. This `RewriteRule` will now match any
+pattern and proxy all incoming requests to https://www.tomitribe.com also adding the previous pattern match after
+the slash via the substitution pattern `$1`.
+
+image::simple-proxy-03-fix-route.png[]
+
+So if the webpage is requesting the file `wp-content/uploads/2018/03/Tomitribe-logo@2x.png`, TAG will request it to
+https://www.tomitribe.com/wp-content/uploads/2018/03/Tomitribe-logo@2x.png.
+
+Now the web page should display correctly:
+
+image::simple-proxy-04-fix-website.png[]
+
+== Summary
+
+This guide was a quick introduction to the TAG Routes mechanism and the supporting engine of mod_rewrite. It teached
+you how to write a simple RewriteRule to proxy requests. This could be used to proxy websites, REST endpoints or any
+kind of traffic that goes through HTTP.
+
+RewriteRule with Proxy behaviour is one of the most basic building blocks to build your orchestration layer on top of
+your API’s.
