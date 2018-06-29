@@ -57,6 +57,17 @@
       </plugin>
 
       <plugin>
+        <groupId>org.apache.rat</groupId>
+        <artifactId>apache-rat-plugin</artifactId>
+        <version>0.11</version>
+        <configuration>
+          <excludes>
+            <exclude>**/*.sql</exclude>
+          </excludes>
+        </configuration>
+      </plugin>
+
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
@@ -78,6 +89,11 @@
         <groupId>org.apache.tomee.maven</groupId>
         <artifactId>tomee-maven-plugin</artifactId>
         <version>${version.tomee}</version>
+        <configuration>
+          <tomeeHttpPort>9080</tomeeHttpPort>
+          <tomeeAjpPort>9009</tomeeAjpPort>
+          <tomeeShutdownPort>9005</tomeeShutdownPort>
+        </configuration>
         <executions>
           <execution>
             <id>executable-jar</id>

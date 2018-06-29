@@ -19,6 +19,7 @@ package io.superbiz.movie.rest;
 import io.superbiz.movie.persistence.Movie;
 import io.superbiz.movie.persistence.MoviesBean;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
@@ -42,6 +43,14 @@ import java.util.List;
 public class MoviesResource {
     @Inject
     private MoviesBean service;
+
+    @PostConstruct
+    private void init() {
+        service.addMovie(new Movie("The Matrix", "The Wachowski Brothers", "Sci-Fi", 9, 1999));
+        service.addMovie(new Movie("John Rambo", "Sylvester Stallone", "Action", 7, 2008));
+        service.addMovie(new Movie("Starship Troopers", "Paul Verhoeven", "Sci-Fi", 7, 1997));
+        service.addMovie(new Movie("Stargate", "Roland Emmerich", "Sci-Fi", 7, 1994));
+    }
 
     @GET
     @Path("{id}")
