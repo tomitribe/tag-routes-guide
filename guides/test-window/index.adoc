@@ -1,0 +1,72 @@
+:encoding: UTF-8
+:linkattrs:
+:sectlink:
+:sectanchors:
+:sectid:
+:imagesdir: media
+:leveloffset: 1
+
+= Route Test Window Quickstart Guide
+
+=== Learning Objectives
+
+* Test your Route rules with the Route Test Window
+
+=== Prerequisites
+
+* Docker
+
+== Route Test Window
+
+The Route Test Window, allows your to easily test your mod_rewrite rules on each Route. It provides information about
+the request, the response, rules evaluation, system information and logs.
+
+=== Run the Sample
+
+Use Docker to start an instance of the TAG with the command:
+
+```
+docker run -e LICENSE=accept --name tag -p 8080:8080 tomitribe/tribestream-api-gateway
+```
+
+Access TAG in http://localhost:8080/tag and login with the credentials `admin/admin`. Navigate to the Routes page
+http://localhost:8080/tag/route and add the example `RewriteRule`:
+
+image::test-window-01-sample-route.png[]
+
+Of course, we could use our browser to test this particular rule. On the other hand, with the Route Test Window, we
+are able to retrieve additional information associated with the execution of the rule to validate that the Route is
+working as expected.
+
+To access the Route Test Window, click the dropdown menu on the top right corner and hit `Test`.
+
+Use the relative address `/something` in the `Resource Url` field and then hit the button `Test`. You will notice that
+TAG returned a 404 status code Not Found.
+
+image::test-window-02-result-404.png[]
+
+If you check the `Routes` tab, you will notice that the reason for it was because the `RewriteRule` failed to match
+with the `Resource Url`.
+
+image::test-window-03-routes-404.png[]
+
+Now, lets try with the right `Resource Url` of `/tomitribe`:
+
+image::test-window-04-result-200.png[]
+
+Now we get a 200 OK, which is the expected response of the http://www.tomitribe.com webpage.
+
+If we check the `Routes` tab again, we get a breakdown of all the steps executed for the `RewriteRule`.
+
+image::test-window-05-routes-200.png[]
+
+== Summary
+
+This guide introduced to you a feature of the TAG, the Route Test Window. With the Route Test Window you are able to
+test your routes in the comfort of the TAG with multiple scenarios.
+
+The Route Test Window supports Requests with multiple Authentication methods, Basic, OAuth2, or Signatures. Headers,
+Query and Form parameters can be added, removed or modified from the Request. Each scenario can be saved and reused
+later.
+
+The Route Test Window is the tool to quickly validate or debug a Route configuration.
