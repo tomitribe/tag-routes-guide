@@ -1,0 +1,15 @@
+%YAML 1.2
+---
+documentation:
+
+  - doc_root: 'guides/simple-proxy/index.adoc'
+    name: 'Routes Quickstart Guide'
+    display_name: 'Routing Simple Proxy'
+    public_path: 'en/api-gateway/routes/simple-proxy'
+    single_page: 'true'
+
+  - doc_root: 'guides/test-window/index.adoc'
+    name: 'Routes Quickstart Guide'
+    display_name: 'Route Test Window'
+    public_path: 'en/api-gateway/routes/test-window'
+    single_page: 'true'
