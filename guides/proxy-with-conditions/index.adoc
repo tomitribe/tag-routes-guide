@@ -1,0 +1,147 @@
+:encoding: UTF-8
+:linkattrs:
+:sectlink:
+:sectanchors:
+:sectid:
+:imagesdir: media
+:leveloffset: 1
+
+= Proxy With Conditions Quickstart Guide
+
+=== Learning Objectives
+
+* Use conditions to control the flow of the Route
+
+=== Prerequisites
+
+* Git
+* Java
+* Maven
+* Docker
+
+=== RewriteCond Directive
+
+The RewriteCond directive defines a rule condition. One or more RewriteCond can precede a RewriteRule directive. The
+following rule is then only used if both the current state of the URI matches its pattern, and if these conditions are
+met:
+
+```
+RewriteCond %{REQUEST_METHOD} POST [OR]
+RewriteCond %{REQUEST_METHOD} PUT [OR]
+RewriteCond %{REQUEST_METHOD} DELETE
+RewriteRule "^/movies(.*)$" "http://host.docker.internal:9080/movie-api/api/movies$1" [P,A]
+
+RewriteCond %{REQUEST_METHOD} !POST
+RewriteCond %{REQUEST_METHOD} !PUT
+RewriteCond %{REQUEST_METHOD} !DELETE
+RewriteRule "^/movies(.*)$" "http://host.docker.internal:9080/movie-api/api/movies$1" [P]
+```
+
+These rules will inspect the http method and if it matches POST, PUT or DELETE, it will evaluate the RewriteRule
+directive in the rule set.
+
+=== Run the Sample
+
+Use Git to clone the following Github repository: https://github.com/tomitribe/tag-routes-quickstart-guide.
+
+Build the code with Maven:
+
+```
+mvn clean install
+```
+
+Run the sample app with:
+
+```
+mvn tomee:run
+```
+
+This will run a Movie App sample with a few REST endpoints available at http://localhost:9080/movie-api/api/movies.
+We are going to route to these endpoints and apply authentication to some of them.
+
+Use Docker to start an instance of the TAG with the command:
+
+```
+docker run -e LICENSE=accept --name tag -p 8080:8080 tomitribe/tribestream-api-gateway
+```
+
+Access TAG in http://localhost:8080/tag and login with the credentials `admin/admin`. Navigate to the Routes page
+http://localhost:8080/tag/route and add the example `RewriteRule`:
+
+image::proxy-with-conditions-01-sample-route.png[]
+
+TIP: You can copy paste the sample from this guide.
+
+IMPORTANT: You may need to adjust the hostname pattern in the `RewriteRule`. This is because the way Docker resolves
+the locahost host is different in each OS. If you are using MacOSX or Windows no change is required. On Linux you may
+need to change `host.docker.internal` to simply `localhost`.
+
+The idea of these rules is to apply authentication to methods that can change the data in the Movies Sample Application
+while leaving other methods open.
+
+Remember to apply a Basic Auth Profile authorization by selecting ‘Add Authentication’ in the dropdown menu at the
+top right corner and adding the ‘A’ flag in the `RewriteRule` directive.
+
+=== Test
+
+Use the Route Test Window, add the address ‘/movies’ in the ´Resource Url´ and hit the button ‘Test’. You should see a
+response with the list of movies that exist in the application.
+
+image::proxy-with-conditions-02-sample-response.png[]
+
+Use the Route Test Window again and try to create a new Movie by using changing the select box ´Method´ to ´POST´,
+keep the address ‘/movies’ in the ´Resource Url´ and the following JSON Payload:
+
+[source,json]
+----
+{
+  "title": "The Terminator",
+  "director": "James Cameron",
+  "genre": "Sci-Fi",
+  "year": 1984,
+  "rating": 8
+}
+----
+
+image::proxy-with-conditions-03-post-movie.png[]
+
+Hit the button ‘Test’. You should now get a 401 Unauthorized. This is because Authentication is being applied since
+the calling method is a POST.
+
+image::proxy-with-conditions-04-post-unauthorized.png[]
+
+If you check the `Routes` tab you will notice that the `Basic Auth Profile` profile failed. In fact, it failed because
+we did not send any Authentication information.
+
+image::proxy-with-conditions-05-routes-unauthorized.png[]
+
+Use the Route Test Window again with the same previous information. This time, let's add the Basic Authentication
+information by using the option ‘Add Basic Auth’ in the dropdown menu. Fill in the username and password with the
+default account ‘admin/admin’.
+
+image::proxy-with-conditions-06-basic-auth.png[]
+
+We also need to add the `Content-Type` header to indicate we are sending JSON. To simplify, we just going to say that
+our `Content-Type` is `*/*`.
+
+image::proxy-with-conditions-07-content-type-header.png[]
+
+Hit the button ‘Test’. You should now get a 200 - OK response code.
+
+image::proxy-with-conditions-08-post-ok.png[]
+
+And the 'Routes' tab everything is also ok:
+
+image::proxy-with-conditions-09-routes-ok.png[]
+
+== Summary
+
+This guide expanded on the https://httpd.apache.org/docs/current/mod/mod_rewrite.html[mod_rewrite, window="_blank"]
+engine by introducing the `RewriteCond` directive. It allows you to implement conditional behaviour that control how
+the `RewriteRules` are executed.
+
+`RewriteCond` support all kinds of conditional expressions like `EQ`, `GT`, `GTE`, `LT` or `LTE`. Expressions to be
+evaluated can originate from the Request like the url, method, query parameters, headers, cookie values and others.
+They can also originate from the host, like environment variables, system properties or the host system information.
+
+Use the `RewriteCond` to enhance your `RewriteRules` and route your clients based on your needs.
