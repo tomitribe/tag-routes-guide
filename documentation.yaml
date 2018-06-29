@@ -13,3 +13,9 @@ documentation:
     display_name: 'Route Test Window'
     public_path: 'en/api-gateway/routes/test-window'
     single_page: 'true'
+
+  - doc_root: 'guides/proxy-with-conditions/index.adoc'
+    name: 'Examples'
+    display_name: 'Proxy With Conditions'
+    public_path: 'en/api-gateway/routes/proxy-with-conditions'
+    single_page: 'true'
