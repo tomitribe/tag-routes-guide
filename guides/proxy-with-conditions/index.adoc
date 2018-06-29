@@ -121,8 +121,8 @@ default account ‘admin/admin’.
 
 image::proxy-with-conditions-06-basic-auth.png[]
 
-We also need to add the `Content-Type` header to indicate we are sending JSON. To simplify, we just going to say that
-our `Content-Type` is `*/*`.
+We also need to add the `Content-Type` header to indicate we are sending JSON. To simplify, we are just going to say
+that our `Content-Type` is `*/*`.
 
 image::proxy-with-conditions-07-content-type-header.png[]
 
@@ -133,6 +133,20 @@ image::proxy-with-conditions-08-post-ok.png[]
 And the 'Routes' tab everything is also ok:
 
 image::proxy-with-conditions-09-routes-ok.png[]
+
+Finally, try to repeat the step where we get the list of the movies. Use the Route Test Window, add the address
+‘/movies’ in the ´Resource Url´ with the `Method` `GET` and hit the button ‘Test’. To confirm that the movie we just
+added shows in the list.
+
+image::proxy-with-conditions-10-list-added.png[]
+
+Seems that the `The Terminator` is now on our movies list.
+
+If we check the `Routes` tab, we will notice something interesting. We can tell that the `RewriteCond` for the methods
+`POST`, `PUT` or `DELETE` failed to evalute, so the next `RewriteRule` was not executed. Proceeding with the
+evaluation the next `RewriteCond` succeed and the `RewriteRule` is executed to retrieve the movies with a `GET` method.
+
+image::proxy-with-conditions-11-routes-evaluation.png[]
 
 == Summary
 
