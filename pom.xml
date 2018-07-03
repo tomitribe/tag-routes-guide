@@ -37,7 +37,11 @@
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
 
-    <version.tomee>7.0.4</version.tomee>
+    <plugin.war.version>3.1.0</plugin.war.version>
+    <plugin.tomee.version>7.0.4</plugin.tomee.version>
+    <plugin.docker.version>0.26.0</plugin.docker.version>
+
+    <listening.port>9080</listening.port>
   </properties>
 
   <build>
@@ -59,7 +63,6 @@
       <plugin>
         <groupId>org.apache.rat</groupId>
         <artifactId>apache-rat-plugin</artifactId>
-        <version>0.11</version>
         <configuration>
           <excludes>
             <exclude>**/*.sql</exclude>
@@ -79,7 +82,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
-        <version>3.1.0</version>
+        <version>${plugin.war.version}</version>
         <configuration>
           <failOnMissingWebXml>false</failOnMissingWebXml>
         </configuration>
@@ -88,7 +91,7 @@
       <plugin>
         <groupId>org.apache.tomee.maven</groupId>
         <artifactId>tomee-maven-plugin</artifactId>
-        <version>${version.tomee}</version>
+        <version>${plugin.tomee.version}</version>
         <configuration>
           <tomeeHttpPort>9080</tomeeHttpPort>
           <tomeeAjpPort>9009</tomeeAjpPort>
@@ -103,6 +106,49 @@
             <phase>package</phase>
           </execution>
         </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>io.fabric8</groupId>
+        <artifactId>docker-maven-plugin</artifactId>
+        <version>${plugin.docker.version}</version>
+        <configuration>
+          <verbose>true</verbose>
+          <pullRegistry>docker.io</pullRegistry>
+          <images>
+            <image>
+              <name>tomitribedev/${project.artifactId}</name>
+              <build>
+                <from>openjdk:8-jre</from>
+                <tags>
+                  <tag>latest</tag>
+                  <tag>${project.version}</tag>
+                </tags>
+                <ports>
+                  <port>${listening.port}</port>
+                </ports>
+                <workdir>/usr/local/apps</workdir>
+                <assembly>
+                  <name>usr/local/apps</name>
+                  <inline>
+                    <files>
+                      <file>
+                        <source>${project.build.directory}/${project.build.finalName}-exec.jar</source>
+                        <destName>${project.build.finalName}.jar</destName>
+                      </file>
+                    </files>
+                  </inline>
+                </assembly>
+                <cmd>java -jar ${project.build.finalName}.jar</cmd>
+              </build>
+              <run>
+                <ports>
+                  <port>${listening.port}:${listening.port}</port>
+                </ports>
+              </run>
+            </image>
+          </images>
+        </configuration>
       </plugin>
     </plugins>
   </build>
