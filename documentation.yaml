@@ -2,20 +2,26 @@
 ---
 documentation:
 
-  - doc_root: 'guides/simple-proxy/index.adoc'
-    name: 'Examples'
-    display_name: 'Routing Simple Proxy'
-    public_path: 'en/api-gateway/routes/simple-proxy'
-    single_page: 'true'
+#  - doc_root: 'guides/simple-proxy/index.adoc'
+#    name: 'Examples'
+#    display_name: 'Routing Simple Proxy'
+#    public_path: 'en/api-gateway/routes/simple-proxy'
+#    single_page: 'true'
+#
+#  - doc_root: 'guides/test-window/index.adoc'
+#    name: 'Examples'
+#    display_name: 'Route Test Window'
+#    public_path: 'en/api-gateway/routes/test-window'
+#    single_page: 'true'
+#
+#  - doc_root: 'guides/proxy-with-conditions/index.adoc'
+#    name: 'Examples'
+#    display_name: 'Proxy With Conditions'
+#    public_path: 'en/api-gateway/routes/proxy-with-conditions'
+#    single_page: 'true'
 
-  - doc_root: 'guides/test-window/index.adoc'
+  - doc_root: 'guides/route-services/index.adoc'
     name: 'Examples'
-    display_name: 'Route Test Window'
-    public_path: 'en/api-gateway/routes/test-window'
-    single_page: 'true'
-
-  - doc_root: 'guides/proxy-with-conditions/index.adoc'
-    name: 'Examples'
-    display_name: 'Proxy With Conditions'
-    public_path: 'en/api-gateway/routes/proxy-with-conditions'
+    display_name: 'Route Services with mod_rewrite'
+    public_path: 'en/api-gateway/route-services'
     single_page: 'true'
