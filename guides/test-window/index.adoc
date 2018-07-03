@@ -30,7 +30,7 @@ docker run -e LICENSE=accept --name tag -p 8080:8080 tomitribe/tribestream-api-g
 ```
 
 Access TAG in http://localhost:8080/tag and login with the credentials `admin/admin`. Navigate to the Routes page
-http://localhost:8080/tag/route and add the example `RewriteRule`:
+http://localhost:8080/tag/routes and add the example `RewriteRule`:
 
 image::test-window-01-sample-route.png[]
 
