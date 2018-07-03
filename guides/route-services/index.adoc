@@ -1,0 +1,223 @@
+:encoding: UTF-8
+:linkattrs:
+:sectlink:
+:sectanchors:
+:sectid:
+:imagesdir: media
+:icons: font
+:leveloffset: 1
+
+= Route Services with mod_rewrite Quickstart Guide
+
+=== Learning Objectives
+
+* Learn how to Route to underlying services.
+* Learn how to conditionally Route to underlying services.
+
+=== Prerequisites
+
+* Docker
+
+== Routing
+
+Routing is an essential concept of the TAG. It allows you to modify, authenticate and authorize each incoming request,
+before resending it to any underlying service based on its URL. It implements the same rule-based rewriting engine as
+https://httpd.apache.org/docs/current/mod/mod_rewrite.html[mod_rewrite, wi ndow="_blank"], with just a few minor
+differences.
+
+== mod_rewrite
+
+https://httpd.apache.org/docs/current/mod/mod_rewrite.html[mod_rewrite, window="_blank"] provides a
+flexible and powerful way to manipulate URLs using an unlimited number of rules.
+
+Each rule can have an unlimited number of attached rule conditions. Each condition can perform tests on server
+variables, environment variables, HTTP headers, timestamps or even JWT properties.
+
+The URL rewriting and matching are based on a regular expression parser, including pattern substitution with captured
+expressions. This allows you to achieve highly granular URL matching and rewriting.
+
+Operations occur in the full URL, including the path-info part and query parameters. Rules are applied to the results
+of previous rules, in the order in which they are defined until all rules have been applied, or it is explicitly
+terminated.
+
+Rules can set special actions to be performed by appending flags to tell the engine to Proxy, Unauthorize, Redirect as
+well as other useful actions to help on the URL rewrite.
+
+=== RewriteRule Directive
+
+To write your first Route, we need a Rewrite Rule. Let's start with a simple one:
+
+```
+RewriteRule "^/movies(.*)$" "http://localhost:9080/movie-api/api/movies$1" [P]
+```
+
+A Rewrite Rule requires the directive `RewriteRule` followed by a pattern `^/movies(.*)$` to match the incoming request
+URL, a substitution `http://localhost:9080/movie-api/api/movies$1` to rewrite the request if matched, and finally one
+or more flags in square brackets `[P]` to apply a Proxy action to the rewritten URL.
+
+The `^` and `$` characters delimit the beginning and the end of the pattern to be matched. The parentheses in the
+pattern expression capture a back-reference that is used as the substitute of `$1` in the rewritten expression.
+
+==== Example
+
+Assuming that TAG is running in `\http://localhost:8080`, this rule will match all the incoming requests to TAG to the
+URL `\http://localhost:8080/movies` and Proxy to the rewritten URL `\http://localhost:9080/movie-api/api/movies`
+due to the `[P]` flag.
+
+If we include something else in the incoming request URL like  `\http://localhost:8080/movies/count` then the resulting
+rewritten URL is `\http://localhost:9080/movie-api/api/movies/count`.
+
+=== Run the Sample
+
+Use Docker to start an instance of the TAG with the command:
+
+*For OSX or Windows:*
+
+```
+docker run -e LICENSE=accept --name tag -p 8080:8080 tomitribe/tribestream-api-gateway
+```
+
+*For Linux:*
+
+```
+docker run -e LICENSE=accept --net=host --name tag -p 8080:8080 tomitribe/tribestream-api-gateway
+```
+
+Also, use Docker to run the Movie Sample App:
+
+*For OSX or Windows:*
+
+```
+docker run --name movies -p 9080:9080 tomitribedev/tag-routes-quickstart-guide
+```
+
+*For Linux:*
+
+```
+docker run --net=host --name movies -p 9080:9080 tomitribedev/tag-routes-quickstart-guide
+```
+
+=== Try the Sample
+
+Access TAG in http://localhost:8080/tag and log in with the credentials `admin/admin`. Navigate to the Routes page
+http://localhost:8080/tag/routes and click the `+` button in the upper right corner and select `mod_rewrite Route`
+to bring the `Create mod_rewrite route` screen. Add the example `RewriteRule`.
+
+```
+RewriteRule "^/movies(.*)$" "http://host.docker.internal:9080/movie-api/api/movies$1" [P]
+```
+
+IMPORTANT: You may need to adjust the hostname pattern in the `RewriteRule`. This is because the way Docker resolves
+the localhost host is different in each OS. If you are using Mac OSX or Windows no change is required. On Linux you may
+need to change `host.docker.internal` to simply `localhost`.
+
+TIP: You can copy-paste the sample from this guide.
+
+image::route-services-01-create-route.png[]
+
+Set the `Name` `Movies Route` and hit `Save`.
+
+Now, in the browser of your choice, try to access the address http://localhost:8080/movies. You should get the list of
+movies available in the Movie Sample App as JSON:
+
+image::route-services-02-movies-list.png[]
+
+With just a simple `RewriteRule` you can easily proxy an entire application.
+
+NOTE: There has to be more. We wouldn't go for all this work just to proxy a few endpoints of an application, right?
+
+=== Expand the Sample with Conditionals
+
+Our Movie App Sample also have endpoints that allow to create with `POST`, update with `PUT` or remove with `DELETE` a
+movie. This is not the desired scenario since any user could mess with the movies data.
+
+Using the `RewriteCond` directive, we could verify the type of endpoint being called and have TAG apply Authentication
+and Authorization on it. To do this, we need the following Route:
+
+```
+RewriteCond %{REQUEST_METHOD} POST [OR]
+RewriteCond %{REQUEST_METHOD} PUT [OR]
+RewriteCond %{REQUEST_METHOD} DELETE
+RewriteRule "^/movies(.*)$" "http://host.docker.internal:9080/movie-api/api/movies$1" [P,auth]
+
+RewriteCond %{REQUEST_METHOD} !POST
+RewriteCond %{REQUEST_METHOD} !PUT
+RewriteCond %{REQUEST_METHOD} !DELETE
+RewriteRule "^/movies(.*)$" "http://host.docker.internal:9080/movie-api/api/movies$1" [P]
+```
+
+These rules will inspect the Http Method and if it matches `POST`, `PUT` or `DELETE`, it will evaluate the `RewriteRule`
+immediately following the `RewriteCond` block. Otherwise, it will continue evaluating the rules.
+
+The `auth` flag tells TAG that a Security Profile needs to be verified when executing the `RewriteRule`, so credentials
+and/or roles can be checked.
+
+You should still be in the `Movie Route` detail screen. To change the mod_rewrite rules, just click the TextArea
+containing the rules. Remove all the content and paste the new one from this sample.
+
+The usage of the `auth` flag should expand an `Authentication` section. In the `Security Profiles` select, pick
+`Basic Auth Profile`. This will tell TAG that the user needs to authenticate with Basic Authentication of username
+and password to proceed with the request successfully.
+
+image::route-services-03-with-conditions.png[]
+
+Hit the `Save` button.
+
+=== Test
+
+Use the `Route Test Window` by clicking the dropdown menu on the top right corner and hit `Test`. Let's try to create a
+new movie:
+
+Change the select box ´Method´ to ´POST´, use the URL ‘/movies’ in the ´Resource URL´ and the following JSON in the
+`Payload` section:
+
+[source,json]
+----
+{
+  "title": "The Terminator",
+  "director": "James Cameron",
+  "genre": "Sci-Fi",
+  "year": 1984,
+  "rating": 8
+}
+----
+
+image::route-services-04-post-movie.png[]
+
+Hit the button ‘Test’. You should now get a `401 Unauthorized`. This is because Authentication is being applied since
+the calling method is a POST.
+
+image::route-services-05-post-unauthorized.png[]
+
+Use the `Route Test Window` again with the same previous information. This time, let's add the Basic Authentication
+information by using the option ‘Add Basic Auth’ in the dropdown menu. Fill in the `Username` and `Password` with the
+default account ‘admin/admin’.
+
+image::route-services-06-basic-auth.png[]
+
+We also need to add the `Content-Type` header to indicate we are sending JSON. To simplify, we are just going to say
+that our `Content-Type` is `*/*`. Click the `+` button next to `Parameters` and pick `Add Header`. A new row should
+open in the `Parameters` table. Add `Content-Type` in the `Name` and `*/*` in the `Value`.
+
+image::route-services-07-content-type-header.png[]
+
+Hit the button ‘Test’. You should now get a `200 OK` response code.
+
+image::route-services-08-post-ok.png[]
+
+Finally, try to repeat the step where we get the list of the movies. In the browser of your choice, try to access the
+address http://localhost:8080/movies:
+
+image::route-services-09-list-added.png[]
+
+Seems that the `The Terminator` is now on our movies list.
+
+== Summary
+
+This guide was a quick introduction to the TAG Routes mechanism and the supporting engine of mod_rewrite. It taught
+you how to write a simple RewriteRule to proxy requests. This could be used to proxy websites, REST endpoints or any
+kind of traffic that goes through HTTP. It also taught you how to implement conditional behavior that controls how
+the rules are executed.
+
+Routes with Proxy behavior is one of the most basic building blocks to build your orchestration layer on top of
+your API’s. Use it to route your clients based on your needs.
