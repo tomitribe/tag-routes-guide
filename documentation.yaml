@@ -23,5 +23,5 @@ documentation:
   - doc_root: 'guides/route-services/index.adoc'
     name: 'Examples'
     display_name: 'Route Services with mod_rewrite'
-    public_path: 'en/api-gateway/route-services'
+    public_path: 'en/api-gateway/route-services-with-modrewrite'
     single_page: 'true'
