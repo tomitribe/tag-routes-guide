@@ -9,12 +9,12 @@
 
 = Route Services with mod_rewrite Quickstart Guide
 
-=== Learning Objectives
+== Learning Objectives
 
 * Learn how to Route to underlying services.
 * Learn how to conditionally Route to underlying services.
 
-=== Prerequisites
+== Prerequisites
 
 * Docker
 
@@ -58,7 +58,7 @@ or more flags in square brackets `[P]` to apply a Proxy action to the rewritten 
 The `^` and `$` characters delimit the beginning and the end of the pattern to be matched. The parentheses in the
 pattern expression capture a back-reference that is used as the substitute of `$1` in the rewritten expression.
 
-==== Example
+=== Example
 
 Assuming that TAG is running in `\http://localhost:8080`, this rule will match all the incoming requests to TAG to the
 URL `\http://localhost:8080/movies` and Proxy to the rewritten URL `\http://localhost:9080/movie-api/api/movies`
@@ -67,7 +67,7 @@ due to the `[P]` flag.
 If we include something else in the incoming request URL like  `\http://localhost:8080/movies/count` then the resulting
 rewritten URL is `\http://localhost:9080/movie-api/api/movies/count`.
 
-=== Run the Sample
+== Run the Sample
 
 Use Docker to start an instance of the TAG with the command:
 
@@ -97,7 +97,7 @@ docker run --name movies -p 9080:9080 tomitribedev/tag-routes-quickstart-guide
 docker run --net=host --name movies -p 9080:9080 tomitribedev/tag-routes-quickstart-guide
 ```
 
-=== Try the Sample
+== Try the Sample
 
 Access TAG in http://localhost:8080/tag and log in with the credentials `admin/admin`. Navigate to the Routes page
 http://localhost:8080/tag/routes and click the `+` button in the upper right corner and select `mod_rewrite Route`
@@ -126,7 +126,7 @@ With just a simple `RewriteRule` you can easily proxy an entire application.
 
 NOTE: There has to be more. We wouldn't go for all this work just to proxy a few endpoints of an application, right?
 
-=== Expand the Sample with Conditionals
+== Expand the Sample with Conditionals
 
 Our Movie App Sample also have endpoints that allow to create with `POST`, update with `PUT` or remove with `DELETE` a
 movie. This is not the desired scenario since any user could mess with the movies data.
@@ -163,7 +163,7 @@ image::route-services-03-with-conditions.png[]
 
 Hit the `Save` button.
 
-=== Test
+== Test
 
 Use the `Route Test Window` by clicking the dropdown menu on the top right corner and hit `Test`. Let's try to create a
 new movie:
