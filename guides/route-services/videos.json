@@ -1,0 +1,9 @@
+{
+  "title": "Routes Quickstart Videos",
+  "videos": [
+    {
+      "displayName": "Route Services with mod_rewrite",
+      "link": "https://youtu.be/9BjEzDpBGSM"
+    }
+  ]
+}
