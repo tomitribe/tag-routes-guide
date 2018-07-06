@@ -141,9 +141,6 @@ RewriteCond %{REQUEST_METHOD} PUT [OR]
 RewriteCond %{REQUEST_METHOD} DELETE
 RewriteRule "^/movies(.*)$" "http://host.docker.internal:9080/movie-api/api/movies$1" [P,auth]
 
-RewriteCond %{REQUEST_METHOD} !POST
-RewriteCond %{REQUEST_METHOD} !PUT
-RewriteCond %{REQUEST_METHOD} !DELETE
 RewriteRule "^/movies(.*)$" "http://host.docker.internal:9080/movie-api/api/movies$1" [P]
 ```
 
