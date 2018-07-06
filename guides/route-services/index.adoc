@@ -56,7 +56,8 @@ URL, a substitution `http://localhost:9080/movie-api/api/movies$1` to rewrite th
 or more flags in square brackets `[P]` to apply a Proxy action to the rewritten URL.
 
 The `^` and `$` characters delimit the beginning and the end of the pattern to be matched. The parentheses in the
-pattern expression capture a back-reference that is used as the substitute of `$1` in the rewritten expression.
+pattern expression capture a back-reference that is used as the substitute of `$1` in the rewritten expression. Useful
+to append parts of the original URI to the rewritten one.
 
 === Example
 
@@ -128,8 +129,8 @@ NOTE: There has to be more. We wouldn't go for all this work just to proxy a few
 
 == Expand the Sample with Conditionals
 
-Our Movie App Sample also have endpoints that allow to create with `POST`, update with `PUT` or remove with `DELETE` a
-movie. This is not the desired scenario since any user could mess with the movies data.
+Our Movie App Sample also have endpoints that allow to create with `POST`, update with `PUT` or remove with `DELETE`
+movies. This is not the desired scenario since any user could mess with the movies data.
 
 Using the `RewriteCond` directive, we could verify the type of endpoint being called and have TAG apply Authentication
 and Authorization on it. To do this, we need the following Route:
