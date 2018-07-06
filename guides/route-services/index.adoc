@@ -70,6 +70,10 @@ rewritten URL is `\http://localhost:9080/movie-api/api/movies/count`.
 
 == Run the Sample
 
+IMPORTANT: If you already have TAG running from another quickstart guide you can skip this step. Or if you have the
+container already create but stopped, start it with the command `docker start tag`. Don't forget to run the container
+for the Movie App Sample.
+
 Use Docker to start an instance of the TAG with the command:
 
 *For OSX or Windows:*
@@ -209,6 +213,28 @@ address http://localhost:8080/movies:
 image::route-services-09-list-added.png[]
 
 Seems that the `The Terminator` is now on our movies list.
+
+== Cleanup
+
+To stop TAG and the Movie App Sample run the following commands:
+
+```
+docker stop tag
+```
+
+```
+docker stop movies
+```
+
+And if you want to completely remove the Docker containers run the following commands:
+
+```
+docker remove tag
+```
+
+```
+docker remove movies
+```
 
 == Summary
 
