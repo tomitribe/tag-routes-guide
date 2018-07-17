@@ -118,14 +118,14 @@ need to change `host.docker.internal` to simply `localhost`.
 
 TIP: You can copy-paste the sample from this guide.
 
-image::route-services-01-create-route.png[]
+image::route-services-01-create-route.png[title="Create Route"]
 
 Set the `Name` `Movies Route` and hit `Save`.
 
 Now, in the browser of your choice, try to access the address http://localhost:8080/movies. You should get the list of
 movies available in the Movie Sample App as JSON:
 
-image::route-services-02-movies-list.png[]
+image::route-services-02-movies-list.png[title="Movies List"]
 
 With just a simple `RewriteRule` you can easily proxy an entire application.
 
@@ -161,7 +161,7 @@ The usage of the `auth` flag should expand an `Authentication` section. In the `
 `Basic Auth Profile`. This will tell TAG that the user needs to authenticate with Basic Authentication of username
 and password to proceed with the request successfully.
 
-image::route-services-03-with-conditions.png[]
+image::route-services-03-with-conditions.png[title="Route with Conditions"]
 
 Hit the `Save` button.
 
@@ -184,33 +184,33 @@ Change the select box ´Method´ to ´POST´, use the URL ‘/movies’ in the �
 }
 ----
 
-image::route-services-04-post-movie.png[]
+image::route-services-04-post-movie.png[title="Post Movie"]
 
 Hit the button ‘Test’. You should now get a `401 Unauthorized`. This is because Authentication is being applied since
 the calling method is a POST.
 
-image::route-services-05-post-unauthorized.png[]
+image::route-services-05-post-unauthorized.png[title="Unauthorized Request"]
 
 Use the `Route Test Window` again with the same previous information. This time, let's add the Basic Authentication
 information by using the option ‘Add Basic Auth’ in the dropdown menu. Fill in the `Username` and `Password` with the
 default account ‘admin/admin’.
 
-image::route-services-06-basic-auth.png[]
+image::route-services-06-basic-auth.png[title="Add Basic Authentication"]
 
 We also need to add the `Content-Type` header to indicate we are sending JSON. To simplify, we are just going to say
 that our `Content-Type` is `*/*`. Click the `+` button next to `Parameters` and pick `Add Header`. A new row should
 open in the `Parameters` table. Add `Content-Type` in the `Name` and `*/*` in the `Value`.
 
-image::route-services-07-content-type-header.png[]
+image::route-services-07-content-type-header.png[title="Add Content-Type header"]
 
 Hit the button ‘Test’. You should now get a `200 OK` response code.
 
-image::route-services-08-post-ok.png[]
+image::route-services-08-post-ok.png[title="Response 200 OK"]
 
 Finally, try to repeat the step where we get the list of the movies. In the browser of your choice, try to access the
 address http://localhost:8080/movies:
 
-image::route-services-09-list-added.png[]
+image::route-services-09-list-added.png[title="Movies List - Added Movie"]
 
 Seems that the `The Terminator` is now on our movies list.
 
