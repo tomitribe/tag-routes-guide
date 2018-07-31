@@ -7,7 +7,7 @@
 :icons: font
 :leveloffset: 1
 
-= Route Services with mod_rewrite Guide
+= Route Services with mod_rewrite
 
 == Learning Objectives
 

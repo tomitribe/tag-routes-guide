@@ -6,7 +6,7 @@
 :imagesdir: media
 :leveloffset: 1
 
-= Route Test Window Quickstart Guide
+= Route Test Window
 
 === Learning Objectives
 

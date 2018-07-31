@@ -6,7 +6,7 @@
 :imagesdir: media
 :leveloffset: 1
 
-= Proxy With Conditions Quickstart Guide
+= Proxy With Conditions
 
 === Learning Objectives
 

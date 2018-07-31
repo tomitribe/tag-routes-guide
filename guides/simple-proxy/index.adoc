@@ -6,7 +6,7 @@
 :imagesdir: media
 :leveloffset: 1
 
-= Routing Simple Proxy Quickstart Guide
+= Routing Simple Proxy
 
 === Learning Objectives
 
